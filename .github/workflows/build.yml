@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  linux-build:
+    name: NSS Service
+    runs-on: ubuntu-latest
+
+    env:
+      source_dir: ${{ github.workspace }}/linux
+      build_dir: ${{ github.workspace }}/linux-build
+      output_file: ${{ env.build_dir }}/libnss_windns.so.2
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -S "$source_dir" -B "$build_dir" -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build "$build_dir" --target nss_windns
+
+    - name: Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux
+        path: ${{ env.output_file }}
+        if-no-files-found: error
+
+  windows-build:
+    name: NSS Proxy
+    runs-on: windows-latest
+    
+    env:
+      source_dir: ${{ github.workspace }}\windows
+      build_dir: ${{ github.workspace }}\windows-build
+      output_file: ${{ env.build_dir }}\windns_proxy.exe
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -S "$source_dir" -B "$build_dir"
+
+    - name: Build
+      run: cmake --build "$build_dir" --target windns_proxy --config Release
+      
+    - name: Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows
+        path: ${{ env.output_file }}
+        if-no-files-found: error
