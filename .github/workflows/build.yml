@@ -15,7 +15,7 @@ jobs:
     env:
       source_dir: ${{ github.workspace }}/linux
       build_dir: ${{ github.workspace }}/linux-build
-      output_file: ${{ env.build_dir }}/libnss_windns.so.2
+      output_filename: libnss_windns.so.2
 
     steps:
     - name: Checkout
@@ -31,7 +31,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: linux
-        path: ${{ env.output_file }}
+        path: ${{ env.build_dir }}/${{ env.output_filename }}
         if-no-files-found: error
 
   windows-build:
@@ -41,21 +41,21 @@ jobs:
     env:
       source_dir: ${{ github.workspace }}\windows
       build_dir: ${{ github.workspace }}\windows-build
-      output_file: ${{ env.build_dir }}\windns_proxy.exe
+      output_filename: windns_proxy.exe
       
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Configure
-      run: cmake -S "$source_dir" -B "$build_dir"
+      run: cmake -S "$env:source_dir" -B "$env:build_dir"
 
     - name: Build
-      run: cmake --build "$build_dir" --target windns_proxy --config Release
+      run: cmake --build "$env:build_dir" --target windns_proxy --config Release
       
     - name: Artifact
       uses: actions/upload-artifact@v4
       with:
         name: windows
-        path: ${{ env.output_file }}
+        path: ${{ env.build_dir }}\Release\${{ env.output_filename }}
         if-no-files-found: error
