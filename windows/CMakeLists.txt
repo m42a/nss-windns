@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 23)
 project(windns_proxy VERSION 1.0 LANGUAGES CXX)
 
 add_executable(windns_proxy WIN32 windns_proxy.cpp)
+target_link_libraries(windns_proxy PRIVATE ws2_32)
