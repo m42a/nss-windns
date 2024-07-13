@@ -87,7 +87,7 @@ namespace
 		// We know home is not empty, so socket_path_len will never be 0
 		if (socket_path_buf[socket_path_len-1] != '/')
 			APPEND("/"sv);
-		APPEND(".windns.socket"sv);
+		APPEND(".windns.socket\0"sv);
 #undef APPEND
 		// WSL differentiates between "WSL" unix sockets and "Win32" unix sockets based on the socket path (see https://devblogs.microsoft.com/commandline/windowswsl-interop-with-af_unix/). This does not resolve symlinks first, so we need to manually follow the link in order to create the right type of unix socket.
 		char real_socket_path_buf[PATH_MAX+1];
